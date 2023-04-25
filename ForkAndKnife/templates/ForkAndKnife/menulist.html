@@ -88,6 +88,9 @@
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Burger</button>
   </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="cdrinks-tab" data-bs-toggle="tab" data-bs-target="#cdrinks" type="button" role="tab" aria-controls="cdrinks" aria-selected="false">Cold drinks</button>
+  </li>
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -112,6 +115,24 @@
     <div class="row">
       {%for food in menuss %}
       {%if food.sub_category_id_id == 2 %}
+      <div class="col border m-3"><div class="row py-2 ">
+          <div class="col-7"><a href="{% url 'orderPage'%}"><img src="{{ food.item_image.url }}" width="100px" height="100px" alt="momo"></a></div>
+          <div class="col">
+              <p class="fs-3">{{ food.name}}</p>
+              <p class="fs-4">Rs. {{ food.price}}</p>
+          </div>
+      </div>
+  </div>
+  {%endif%}
+  {%endfor%}
+                                    
+      
+  </div>
+  </div>
+  <div class="tab-pane fade" id="cdrinks" role="tabpanel" aria-labelledby="cdrinks-tab">
+    <div class="row">
+      {%for food in menuss %}
+      {%if food.sub_category_id_id == 4 %}
       <div class="col border m-3"><div class="row py-2 ">
           <div class="col-7"><a href="{% url 'orderPage'%}"><img src="{{ food.item_image.url }}" width="100px" height="100px" alt="momo"></a></div>
           <div class="col">
