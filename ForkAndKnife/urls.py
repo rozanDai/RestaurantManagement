@@ -13,8 +13,12 @@ urlpatterns = [
     path("about/", views.about, name="aboutPage"),
    # path("profile/<str:username>/", views.profile, name="profilePage"),
    path("profile/", views.profile, name="profilePage"),
-   path('menulist', views.menuList, name="menulistPage"),
-   path('order/', views.order, name="orderPage"),
+   path('food', views.menuFoodList, name="menuFoodPage"),
+     path('drink', views.menuDrinkList, name="menuDrinkPage"),
+      path('bakery', views.menuBakeryList, name="menuBakeryPage"),
+   path('desert', views.menuDesertList, name="menuDesertPage"),
+   #   path('menulist', views.menuList, name="menulistPage"),
+   path('orderitem/<int:id>/', views.orderItem, name="orderPage",),
 
 
    ##password reset

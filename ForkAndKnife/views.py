@@ -95,7 +95,7 @@ def home(request):
 
 
 def menu(request):
-    return render(request, "ForkAndKnife/menu.html")
+    return render(request, "ForkAndKnife/menu.html",)
 
 def about(request):
     return render(request, 'ForkAndKnife/about.html')
@@ -110,12 +110,40 @@ def profile(request):
     return render(request, 'ForkAndKnife/profile.html')
 
 
-def menuList(request):
+def menuFoodList(request):
     obj = SubCategory.objects.all()
     menus = Menu.objects.all()
 
-    return render(request, "ForkAndKnife/menulist.html", {'objj': obj , 'menuss': menus})
+    return render(request, "ForkAndKnife/menuFood.html", {'objj': obj , 'menuss': menus})
+
+def orderItem(request, id):
+    #menus = Menu.objects.all()
+    order = get_object_or_404(Menu, id = id)
+    #order = Menu.objects.get(id=id)
+    return render(request, "ForkAndKnife/orderMenu.html", { 'order': order})
+
+# def orderItem(request):
+    # return render(request, "ForkAndKnife/orderMenu.html")
+# 
+def menuList(request):
+    return HttpResponse("hello")
+
+def menuDrinkList(request):
+     obj = SubCategory.objects.all()
+     menus = Menu.objects.all()
+    
+     return render(request, "ForkAndKnife/menuDrink.html", {'objj': obj , 'menuss': menus})
 
 
-def order(request):
-    return render(request, "ForkAndKnife/orderMenu.html")
+def menuBakeryList(request):
+     obj = SubCategory.objects.all()
+     menus = Menu.objects.all()
+    
+     return render(request, "ForkAndKnife/menuBakery.html", {'objj': obj , 'menuss': menus})
+
+
+def menuDesertList(request):
+     obj = SubCategory.objects.all()
+     menus = Menu.objects.all()
+    
+     return render(request, "ForkAndKnife/menuDeserts.html", {'objj': obj , 'menuss': menus})

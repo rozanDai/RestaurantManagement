@@ -45,30 +45,32 @@
   <div class="container">
     <div class="d-flex justify-content-between gap-3 border">
         <div class="order-photo border border-success border-2">
-            <img src="{% static 'images/chicken.jpg' %}" alt="" width="100%" height="100%">
+
+            <img src="{{order.item_image.url}}" alt="" width="100%" height="100%">
         </div>
         <div class="order-details text-center">
-            <h4 class="fs-1">Chicken momo</h4>
-            <p class="fs-4 ma my-5">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus officia nihil ratione perferendis autem alias? Cum aliquam blanditiis aperiam perspiciatis veniam expedita, ipsam, quam soluta, excepturi ipsa nam placeat sapiente!</p>
+            <h4 class="fs-1">{{order.name}}</h4>
+            <p class="fs-4 ma my-5">{{order.desctription}}</p>
             <div class="input-group margin">
+
               <span class="fs-3">quantity</span>   
-                <span class="input-group-btn mx-4">
+                <!--span class="input-group-btn mx-4">
                     <button type="button" class="quantity-left-minus d-inline"  data-type="minus" data-field="">
                     <span class="fa fa-minus p-2 m-2"></span>
                      </button>
-                </span>
+                </span-->
                 <form>
                 <input type="text" id="quantity" name="quantity" method = "post" class="form-control input-number " value="1" min="0" max="10">              
                 </form>
-                       <span class="input-group-btn ">
+                       <!--span class="input-group-btn ">
                         <span class="input-group-btn mx-4">
                        <button type="button" class="quantity-right-plus" data-type="plus" data-field="">
                         <span class="fa fa-plus p-2 m-2"></span>
                        </button>
-                      </span>
+                      </span-->
             </div>
-            <button class="btn btn-primary">Order now</button>
-        <button class="btn btn-primary ">Add to cart</button>
+            <!--button class="btn btn-primary">Order now</button-->
+        <button class="btn btn-primary " type="submit">Add to cart</button>
         </div>
       </div>
   </footer>
