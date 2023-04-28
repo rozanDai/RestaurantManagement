@@ -1,18 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import User
-#from django.contrib.auth.models import AbstractUser
+#from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 
 import datetime
 
 # Create your models here.
 
-# class CustomUser(AbstractUser):
-    # phone_number = models.CharField(max_length=10)
-    # address = models.TextField()
-# 
-    # def __str__(self):
-        # return self.first_name
-# 
+class Customer(AbstractUser):
+    phone_number = models.CharField(max_length=10)
+    address = models.TextField()
+
+    def __str__(self):
+        return self.username
+
    #REQUIRED_FIELDS = ['email', 'number', 'address']
 
 
@@ -48,24 +49,26 @@ class Menu(models.Model):
     
 
 # 
+
 class Order(models.Model):
     order_id = models.AutoField;
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    #customer = models.ForeignKey(Custom, on_delete=models.CASCADE)
    # customer_contact = models.CharField(max_length=10)
     customer_address = models.CharField(max_length=100)
     order_items = models.ManyToManyField('Menu',through='OrderItem')
     total_price = models.DecimalField(max_digits=6, decimal_places=2)
-    order_date = models.DateField(datetime.date)
+    order_date = models.DateField(datetime.date, default="")
     bill = models.OneToOneField('Billing', on_delete=models.CASCADE, null=True)
 
 
     def __str__(self):
-        return f"Order #{self.id} ({self.customer_name})"
+        return f"Order #{self.id}"
     
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    item = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    OrderItem_id = models.AutoField;
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    item = models.ForeignKey(Menu, on_delete=models.CASCADE, null=True)
     quantity = models.PositiveIntegerField()
     item_price = models.DecimalField(max_digits=6, decimal_places=2)
 
@@ -80,7 +83,8 @@ class OrderItem(models.Model):
 
 
 class Billing(models.Model):
-    orderr = models.ForeignKey(Order, on_delete=models.CASCADE)
+    billing_id = models.AutoField;
+    orderr = models.ForeignKey(Order, on_delete=models.CASCADE, default="")
     payment_method = models.CharField(max_length=50)
     payment_status = models.CharField(max_length=50)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)

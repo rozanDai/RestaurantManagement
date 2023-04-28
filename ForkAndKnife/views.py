@@ -75,12 +75,13 @@ def signup(request):
     # Render the joinnow.html template with the form
     return render(request, 'ForkAndKnife/joinnow.html', {'form': form}) 
 
-# from .models import CustomUser
-# 
-# def signup(request):
-    # 
-    # return render(request, 'ForkAndKnife/joinnow.html',)
-# 
+#from .models import CustomUser
+
+#def signup(request):
+
+    
+ #   return render(request, 'ForkAndKnife/joinnow.html',)
+
 
 def logoutview(request):
     logout(request)
