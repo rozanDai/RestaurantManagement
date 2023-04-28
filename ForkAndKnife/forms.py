@@ -29,6 +29,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+#from .models import CustomUser
 from django.contrib.auth.models import User
 
 # Create a custom form that extends UserCreationForm
@@ -48,7 +49,10 @@ class CustomUserCreationForm(UserCreationForm):
     # Use the User model and include the new fields in the form
     class Meta:
         model = User
+        #model = CustomUser
         fields = UserCreationForm.Meta.fields+('first_name', 'last_name', 'email', )  
+       # fields = ('username', 'email',)
+
     # Override the save() method to set the first name and last name fields
     def save(self, commit=True):
         user = super().save(commit=False)
