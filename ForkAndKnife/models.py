@@ -64,7 +64,7 @@ class Menu(models.Model):
         # return sum(item.total_price for item in self.order_items.all())
 # 
 
-
+'''
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default= None)
     #cart = models.ForeignKey(Cart, on_delete=models.CASCADE, default=None)
@@ -79,8 +79,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id}  - {self.total_price}"
+        
+        '''
     
-
+'''
 class OrderItem(models.Model):
    # cart = models.ForeignKey(Cart, on_delete=models.CASCADE,default=None ,related_name= 'order_items')
    # order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
@@ -93,13 +95,51 @@ class OrderItem(models.Model):
     
     @property
     def total_price(self):
-        return self.price * self.quantity
-    
+        return self.price * self.quantity '''
 
 
+class Order(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Menu)
+    quantity = models.IntegerField(default=1)
+    total_price = models.DecimalField(max_digits=6, decimal_places=2, default=0.0)
+    payment_method = models.CharField(max_length=30, default="Cash on Delivery")
+    delivery_address = models.CharField(max_length=100, default="")
+
+    date_ordered = models.DateTimeField(auto_now_add=True)
+    complete = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s Order"
+
+    @property
+    def get_cart_total(self):
+        order_items = self.orderitem_set.all()
+        total = sum(item.get_total for item in order_items)
+        return total
+
+
+
+class OrderItem(models.Model):
+    item = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, default="")
+  #  order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.quantity} of {self.item.name}"
+
+    @property
+    def get_total(self):
+        total = round (self.item.price * self.quantity)
+        return total
+
+'''
 class Billing(models.Model):
     billing_id = models.AutoField;
-    orderr = models.ForeignKey(Order, on_delete=models.CASCADE, default="")
+   # orderr = models.ForeignKey(Order, on_delete=models.CASCADE, default="")
     payment_method = models.CharField(max_length=50)
     payment_status = models.CharField(max_length=50)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -107,7 +147,7 @@ class Billing(models.Model):
 
     def __str__(self):
         return f"Billing for Order #{self.orderr.id}"
-    
+    '''
 
 
 

@@ -2,11 +2,29 @@
 <html>
 <head>
 	<title>Cart</title>
+	<style>
+		body{
+			background-color: black;
+			color: white;
+		}
+		table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #978d8d;
+    }
+	</style>
 </head>
 <body>
-	<h1>Cart</h1>
-	{% if cart_items %}
-		<table>
+	<h1> My Cart</h1>
+
+	<table>
 			<thead>
 				<tr>
 					<th>Product</th>
@@ -16,26 +34,29 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for item in cart_items %}
+				{% for items in context %}
 					<tr>
-						<td>{{ item.product.name }}</td>
-						<td>{{ item.quantity }}</td>
-						<td>{{ item.product.price }}</td>
-						<td>{{ item.total_cost }}</td>
+						<td>{{ items.item.name }}</td>
+						<td>{{ items.quantity }}</td>
+						<td>{{ items.item.price }}</td>
+						<td>{{ items.get_total }}</td>
 					</tr>
 				{% endfor %}
-				<tr>
+				<tr style="background-color: #978d8d;">
 					<td colspan="3"><strong>Total:</strong></td>
-					<td>{{ total_cost }}</td>
+					<td>{{ total }}</td>
 				</tr>
 			</tbody>
-		</table>
-		<form action="/place-order/" method="POST">
+		</table> <br>
+		<form action="/place-order/" method="POST" >
 			{% csrf_token %}
+			<input type="text" placeholder="Delivery Address" name="address"> <br>
+			<input type="number" placeholder="Contact Number" name="contact">
 			<button type="submit">Place Order</button>
 		</form>
-	{% else %}
-		<p>Your cart is empty.</p>
-	{% endif %}
+	
+	
+	
+	
 </body>
 </html>

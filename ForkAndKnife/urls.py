@@ -20,11 +20,11 @@ urlpatterns = [
    #   path('menulist', views.menuList, name="menulistPage"),
    path('orderitem/<int:id>/', views.orderItem, name="orderPage",),
 
-
-    path('cart/', views.cart, name='cart'),
-    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+# 
+     path('cart/', views.cart, name='cartPage'),
+    # path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('place-order/', views.place_order, name='place_order'),
-    path('order-history/', views.order_history, name='order_history'),
+    # path('order-history/', views.order_history, name='order_history'),
 
 
    ##password reset

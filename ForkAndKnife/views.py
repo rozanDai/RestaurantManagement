@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import CustomUserCreationForm
 
-from .models import Menu, SubCategory, Order, OrderItem,Customer
+from .models import Menu, SubCategory,Customer, OrderItem, Order
 # Create your views here.
 
 # def index(request:
@@ -124,23 +124,28 @@ def menuFoodList(request):
     return render(request, "ForkAndKnife/menuFood.html", {'objj': obj , 'menuss': menus})
 
 def orderItem(request, id):
-    #menus = Menu.objects.all()
     order = get_object_or_404(Menu, id = id)
-    #order = Menu.objects.get(id=id)
+
+    if request.method == "POST":
+        quantity = request.POST.get('quantity')
+        user = request.user
+        #order, created = Order.objects.get_or_create(user=request.user)
+        order_item = OrderItem( quantity=quantity, item_id=order.id, user=user)
+        order_item.save()
+       # print(order_item.get_total)
+       # order.items.add(order_item)
+        #order.total += order_item.price
+        #order.save()
 
 
-    #food = Menu.objects.get(id=product_id)
-    # cart_item, created = OrderItem.objects.get_or_create(
-    # user=request.user,
-    #foods=order,
-    # defaults={'quantity': 1, 'total_cost': order.price})
-    # if not created:
-        # cart_item.quantity += 1
-        # cart_item.total_cost += order.price
-        # cart_item.save()
-        # messages.success(request, 'Item added to cart.')
-        # return redirect('orderPage')
-    return render(request, "ForkAndKnife/orderMenu.html", { 'order': order})
+        #order_item = OrderItem(prod= 'prod',quantity='quantity', id = 'idd',)
+      #  order.save()
+        return HttpResponse(user)
+
+        #return redirect('menuPage')
+
+
+    return render(request, "ForkAndKnife/orderMenu.html", { 'order': order})  
 
 # def orderItem(request):
     # return render(request, "ForkAndKnife/orderMenu.html")
@@ -168,6 +173,7 @@ def menuDesertList(request):
     
      return render(request, "ForkAndKnife/menuDeserts.html", {'objj': obj , 'menuss': menus})
 
+'''
 #@ogin_required
 def cart(request):
     cart_items = OrderItem.objects.filter(user=request.user)
@@ -193,35 +199,53 @@ def add_to_cart(request, product_id):
         cart_item.save()
     messages.success(request, 'Item added to cart.')
     return redirect('orderPage')
-
+'''
 
 
 #@login_required
 def place_order(request):
-    cart_items = OrderItem.objects.filter(user=request.user)
-    total_cost = sum(item.total_cost for item in cart_items)
-    order = Order.objects.create(user=request.user, total_cost=total_cost)
-    order.items.set(cart_items)
-    order.save()
-    cart_items.delete()
-    messages.success(request, 'Order placed successfully.')
-    return redirect('order_history')
+    if request.method== 'POST':
+        address = request.POST.get('address')
+        #number = request.POST.get('number')
+        cart_items = OrderItem.objects.filter(user=request.user)
+        total_quantity = 0
+        for i in cart_items:
+            total_quantity += i.quantity
+        total = total_quantity
+        total_cost = sum(item.get_total for item in cart_items)
+        order = Order.objects.create(user=request.user,delivery_address=address, quantity=total,
+                                     total_price = total_cost )
+#        order = Order(delivery_address=address, quantity=total,
+ #                      total_price = total_cost )
+       # order.items.set(cart_items)
+        order.save()
+        cart_items.delete()
+        messages.success(request, 'Order placed successfully.')
+        return redirect('homePage')
 
-
+'''
 #@login_required
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-date_created')
     context = {
         'orders': orders
     }
-    return render(request, 'order_history.html', context)
+    return render(request, 'order_history.html', context) '''
 
 # 
 #@login_required
-# def view_cart(request):
-    # items = Cart.objects.filter(user=request.user)
-    # context = {'items': items}
-    # return render(request, 'cart.html', context)
+def cart(request):
+    items = OrderItem.objects.filter(user=request.user)
+   # total_price = sum(item.get_total() for item in items)
+    #name = items.item_id.name
+    #context = {'items': items}
+   # return HttpResponse(items)
+    total_price = 0
+    for i in items:
+        total_price += i.get_total
+    total = total_price
+        
+    return render(request, 'ForkAndKnife/cart.html', {'context': items, 'total' : total })
 # 
 #@login_required
 # def remove_from_cart(request, item_id):
