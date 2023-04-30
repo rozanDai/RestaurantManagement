@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import CustomUserCreationForm
 
-from .models import Menu, SubCategory, Order, OrderItem
+from .models import Menu, SubCategory, Order, OrderItem,Customer
 # Create your views here.
 
 # def index(request:
@@ -127,13 +127,26 @@ def orderItem(request, id):
     #menus = Menu.objects.all()
     order = get_object_or_404(Menu, id = id)
     #order = Menu.objects.get(id=id)
+
+
+    #food = Menu.objects.get(id=product_id)
+    # cart_item, created = OrderItem.objects.get_or_create(
+    # user=request.user,
+    #foods=order,
+    # defaults={'quantity': 1, 'total_cost': order.price})
+    # if not created:
+        # cart_item.quantity += 1
+        # cart_item.total_cost += order.price
+        # cart_item.save()
+        # messages.success(request, 'Item added to cart.')
+        # return redirect('orderPage')
     return render(request, "ForkAndKnife/orderMenu.html", { 'order': order})
 
 # def orderItem(request):
     # return render(request, "ForkAndKnife/orderMenu.html")
 # 
-def menuList(request):
-    return HttpResponse("hello")
+# def menuList(request):
+    # return HttpResponse("hello")
 
 def menuDrinkList(request):
      obj = SubCategory.objects.all()
@@ -171,7 +184,7 @@ def add_to_cart(request, product_id):
     food = Menu.objects.get(id=product_id)
     cart_item, created = OrderItem.objects.get_or_create(
         user=request.user,
-        foods=food,
+     #   foods=food,
         defaults={'quantity': 1, 'total_cost': food.price}
     )
     if not created:
@@ -179,7 +192,7 @@ def add_to_cart(request, product_id):
         cart_item.total_cost += food.price
         cart_item.save()
     messages.success(request, 'Item added to cart.')
-    return redirect('cart')
+    return redirect('orderPage')
 
 
 
@@ -203,3 +216,15 @@ def order_history(request):
     }
     return render(request, 'order_history.html', context)
 
+# 
+#@login_required
+# def view_cart(request):
+    # items = Cart.objects.filter(user=request.user)
+    # context = {'items': items}
+    # return render(request, 'cart.html', context)
+# 
+#@login_required
+# def remove_from_cart(request, item_id):
+    # Cart.objects.filter(user=request.user, item_id=item_id).delete()
+    # messages.success(request, "Item removed from cart.")
+    # return redirect('cart')
