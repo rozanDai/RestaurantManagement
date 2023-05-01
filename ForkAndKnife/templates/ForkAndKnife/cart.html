@@ -23,6 +23,16 @@
 </head>
 <body>
 	<h1> My Cart</h1>
+	<button id="update"> Update</button>
+	<button id="delete"> Delete</button>
+
+	<script>
+		var myButton = document.getElementById("update");
+		myButton.addEventListener("click", function() {
+			window.location.href = "{% url 'updateCart'  %}";
+		});
+		</script>
+
 
 	<table>
 			<thead>

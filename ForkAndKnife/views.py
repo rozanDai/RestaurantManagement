@@ -113,9 +113,19 @@ def about(request):
     # context = {'user': user, 'profile': profile}
     # return render(request, "ForkAndKnife/profile.html",context)
 
+@login_required
 def profile(request):
-    return render(request, 'ForkAndKnife/profile.html')
+    user = request.user
+    customer = Customer.objects.get(id=user.id)
+    context = {
+        'user': user,
+        'customer': customer,
+        'phone_number': customer.phone_number,
+        'address': customer.address,        
 
+    }
+
+    return render(request, 'ForkAndKnife/profile.html',context)
 
 def menuFoodList(request):
     obj = SubCategory.objects.all()
@@ -140,18 +150,16 @@ def orderItem(request, id):
 
         #order_item = OrderItem(prod= 'prod',quantity='quantity', id = 'idd',)
       #  order.save()
-        return HttpResponse(user)
+        #return HttpResponse(user)
 
-        #return redirect('menuPage')
+        return redirect('menuPage')
 
 
     return render(request, "ForkAndKnife/orderMenu.html", { 'order': order})  
 
-# def orderItem(request):
-    # return render(request, "ForkAndKnife/orderMenu.html")
-# 
-# def menuList(request):
-    # return HttpResponse("hello")
+
+
+
 
 def menuDrinkList(request):
      obj = SubCategory.objects.all()
@@ -252,3 +260,18 @@ def cart(request):
     # Cart.objects.filter(user=request.user, item_id=item_id).delete()
     # messages.success(request, "Item removed from cart.")
     # return redirect('cart')
+
+
+from .forms import CartItemForm
+
+def update_cart(request,):
+    
+    item = OrderItem.objects.all()
+    if request.method == 'POST':
+        form = CartItemForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('cartPage')
+    else:
+        form = CartItemForm(instance=item)
+    return render(request, 'updateCart.html', {'form': form})
