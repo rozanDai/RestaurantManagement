@@ -23,15 +23,8 @@
 </head>
 <body>
 	<h1> My Cart</h1>
-	<button id="update"> Update</button>
-	<button id="delete"> Delete</button>
 
-	<script>
-		var myButton = document.getElementById("update");
-		myButton.addEventListener("click", function() {
-			window.location.href = "{% url 'updateCart'  %}";
-		});
-		</script>
+	{% if context %}
 
 
 	<table>
@@ -48,8 +41,23 @@
 					<tr>
 						<td>{{ items.item.name }}</td>
 						<td>{{ items.quantity }}</td>
+						<form method="post" action="{% url 'updateCart' id=items.id %}">
+							{% csrf_token %}
+							<p>{{ items.item.name}}</p>
+							<input type="number" name="quantity" value="{{ items.quantity }}">
+							<button type="submit">Update</button>
+						  </form>
+						  <form method="POST" action="{% url 'deleteCart' id=items.id %}">
+							{% csrf_token %}
+							<button type="submit">Delete</button>
+						</form>
 						<td>{{ items.item.price }}</td>
 						<td>{{ items.get_total }}</td>
+						
+						
+						
+						
+						
 					</tr>
 				{% endfor %}
 				<tr style="background-color: #978d8d;">
@@ -58,6 +66,7 @@
 				</tr>
 			</tbody>
 		</table> <br>
+
 		<form action="/place-order/" method="POST" >
 			{% csrf_token %}
 			<input type="text" placeholder="Delivery Address" name="address"> <br>
@@ -65,6 +74,9 @@
 			<button type="submit">Place Order</button>
 		</form>
 	
+		{% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
 	
 	
 	

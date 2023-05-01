@@ -261,17 +261,69 @@ def cart(request):
     # messages.success(request, "Item removed from cart.")
     # return redirect('cart')
 
+# 
+# from .forms import CartItemForm
+# 
+# def update_cart(request,):
+    # 
+    # item = OrderItem.objects.all()
+    # if request.method == 'POST':
+        # form = CartItemForm(request.POST, instance=item)
+        # if form.is_valid():
+            # form.save()
+            # return redirect('cartPage')
+    # else:
+        # form = CartItemForm(instance=item)
+    # return render(request, 'updateCart.html', {'form': form})
+# 
 
-from .forms import CartItemForm
+def update_cart(request, id):
+    # get the item id and new quantity from the POST data
+    id = str(id)
+    quantity = int(request.POST['quantity'])
+   # update the item quantity in the cart
+    cart_item = OrderItem.objects.filter(id=id).first()
+    print(f"quantiy is : {cart_item}")
+    try:
+        cart_item = OrderItem.objects.get(id=id)
+    except OrderItem.DoesNotExist:
+        print(f"No OrderItem found with item_id={id}")
 
-def update_cart(request,):
+    if cart_item is not None:
+        #cart_item.quantity = quantity
+        #cart_item.save()
+        cart_item.quantity = quantity
+        print(f"Quantity updated to {quantity}")
+        cart_item.save()
+        print("Item saved to database")
+
+
+    return redirect('cartPage')
+
+
+
+def delete_cart(request, id):
+    # Get the item id
+    item_id = int(id)
     
-    item = OrderItem.objects.all()
+    # Get the order item to be deleted
+    order_item = OrderItem.objects.get(id=item_id)
+    
+    # Delete the order item from the cart
+    order_item.delete()
+    
+    # Redirect to the cart page
+    return redirect('cartPage')
+
+
+@login_required
+
+def delete_account(request):
     if request.method == 'POST':
-        form = CartItemForm(request.POST, instance=item)
-        if form.is_valid():
-            form.save()
-            return redirect('cartPage')
-    else:
-        form = CartItemForm(instance=item)
-    return render(request, 'updateCart.html', {'form': form})
+        # Delete the user's data
+        request.user.delete()
+        # Log the user out
+        logout(request)
+        messages.success(request, 'Your account has been deleted.')
+        return redirect('indexPage')
+    return render(request, 'ForkAndKnife/deleteUser.html')
