@@ -122,6 +122,8 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     item = models.ForeignKey(Menu, on_delete=models.CASCADE)
+   # order = models.ForeignKey(Order, on_delete=models.CASCADE, null= True, default="")
+
     user = models.ForeignKey(Customer, on_delete=models.CASCADE, default="")
   #  order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)

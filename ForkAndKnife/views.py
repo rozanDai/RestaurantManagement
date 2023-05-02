@@ -227,21 +227,22 @@ def place_order(request):
  #                      total_price = total_cost )
        # order.items.set(cart_items)
         order.save()
-        cart_items.delete()
+      #  cart_items.delete()
         messages.success(request, 'Order placed successfully.')
         return redirect('homePage')
 
-'''
 #@login_required
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-date_created')
+    orders = Order.objects.filter(user=request.user).order_by('-date_ordered')
     context = {
-        'orders': orders
+        'orders': orders,
+       # 'item' : OrderItem
     }
-    return render(request, 'order_history.html', context) '''
+    return render(request, 'ForkAndKnife/orderhistory.html', context) 
 
 # 
-#@login_required
+
+@login_required
 def cart(request):
     items = OrderItem.objects.filter(user=request.user)
    # total_price = sum(item.get_total() for item in items)
@@ -254,29 +255,9 @@ def cart(request):
     total = total_price
         
     return render(request, 'ForkAndKnife/cart.html', {'context': items, 'total' : total })
-# 
-#@login_required
-# def remove_from_cart(request, item_id):
-    # Cart.objects.filter(user=request.user, item_id=item_id).delete()
-    # messages.success(request, "Item removed from cart.")
-    # return redirect('cart')
-
-# 
-# from .forms import CartItemForm
-# 
-# def update_cart(request,):
-    # 
-    # item = OrderItem.objects.all()
-    # if request.method == 'POST':
-        # form = CartItemForm(request.POST, instance=item)
-        # if form.is_valid():
-            # form.save()
-            # return redirect('cartPage')
-    # else:
-        # form = CartItemForm(instance=item)
-    # return render(request, 'updateCart.html', {'form': form})
-# 
-
+    
+## code for updating items in Cart
+@login_required
 def update_cart(request, id):
     # get the item id and new quantity from the POST data
     id = str(id)
@@ -301,7 +282,7 @@ def update_cart(request, id):
     return redirect('cartPage')
 
 
-
+@login_required
 def delete_cart(request, id):
     # Get the item id
     item_id = int(id)
@@ -316,8 +297,9 @@ def delete_cart(request, id):
     return redirect('cartPage')
 
 
-@login_required
+'''
 
+@login_required
 def delete_account(request):
     if request.method == 'POST':
         # Delete the user's data
@@ -327,3 +309,75 @@ def delete_account(request):
         messages.success(request, 'Your account has been deleted.')
         return redirect('indexPage')
     return render(request, 'ForkAndKnife/deleteUser.html')
+
+
+def generate_bill(request, order_id):
+    # retrieve the order from the database
+    order = Order.objects.get(id=order_id)
+
+    # render the bill template with the relevant data
+    bill_template = 'ForkAndKnife/bill.html'
+    context = {'order': order}
+    html = render(request, bill_template, context)
+
+    # return the rendered template as an HTTP response
+    response = HttpResponse(html, content_type='text/html')
+    response['Content-Disposition'] = f'attachment; filename=Bill-{order_id}.html'
+    return response
+'''
+
+from django.template.loader import get_template
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+
+def generate_bill(request, order_id):
+    order = Order.objects.get(id=order_id)
+    items = order.items.all()
+   # item = OrderItem.objects.filter(user=request.user)
+
+   # quantity = order.quantity
+
+    # get the template
+    template = get_template('ForkAndKnife/bill.html')
+    context = {'order': order, 'items': items,}
+
+    # create a file-like buffer to receive PDF data
+    buffer = BytesIO()
+
+    # create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer)
+
+    # draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    # http://www.reportlab.com/docs/reportlab-userguide.pdf
+    p.drawString(100, 750, "Order Invoice")
+    p.drawString(100, 700, "Order ID: {}".format(order.id))
+    p.drawString(100, 650, "User: {}".format(order.user.username))
+    p.drawString(100, 600, "Delivery Address: {}".format(order.delivery_address))
+
+    # loop through the items and draw them on the PDF
+    y = 500
+    for item in items:
+        p.drawString(100, y, item.name)
+       # p.drawString(200, y, str(item.quantity))
+        p.drawString(300, y, str(item.price))
+      #  p.drawString(400, y, str(item.get_total()))
+        y -= 50
+
+    p.drawString(300, y-30, "Total Quantity: {}".format(order.quantity))
+
+    p.drawString(300, y-50, "Total: {}".format(order.total_price))
+
+    # close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+    response.write(pdf)
+    return response
+

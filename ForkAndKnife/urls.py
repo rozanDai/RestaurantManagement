@@ -18,13 +18,14 @@ urlpatterns = [
    path('desert', views.menuDesertList, name="menuDesertPage"),
    path('orderitem/<int:id>/', views.orderItem, name="orderPage",),
    
-   path('delete/', views.delete_account, name="deletePage"),
+   #path('delete/', views.delete_account, name="deletePage"),
 
      path('cart/', views.cart, name='cartPage'),
     path('place-order/', views.place_order, name='place_order'),
     path('updateCart/<int:id>/',views.update_cart, name = 'updateCart' ),
     path('deleteCart/<int:id>/', views.delete_cart, name="deleteCart"),
-    # path('order-history/', views.order_history, name='order_history'),
+     path('order-history/', views.order_history, name='order_history'),
+     path('generate_bill/<int:order_id>/', views.generate_bill, name='generateBill'),
 
 
    ##password reset
