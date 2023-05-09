@@ -96,6 +96,7 @@ def home(request):
     else:
         return redirect('loginPage') '''
 
+@login_required
 def home(request):
     menus = Menu.objects.all()
     return render(request, 'ForkAndKnife/home.html',{'menuss': menus})
@@ -245,6 +246,7 @@ def order_history(request):
 @login_required
 def cart(request):
     items = OrderItem.objects.filter(user=request.user)
+    
    # total_price = sum(item.get_total() for item in items)
     #name = items.item_id.name
     #context = {'items': items}
@@ -253,8 +255,10 @@ def cart(request):
     for i in items:
         total_price += i.get_total
     total = total_price
+
+    delivery = total + 100
         
-    return render(request, 'ForkAndKnife/cart.html', {'context': items, 'total' : total })
+    return render(request, 'ForkAndKnife/newCart.html', {'context': items, 'total' : total , 'delivery' : delivery})
     
 ## code for updating items in Cart
 @login_required
@@ -355,6 +359,7 @@ def generate_bill(request, order_id):
     p.drawString(100, 700, "Order ID: {}".format(order.id))
     p.drawString(100, 650, "User: {}".format(order.user.username))
     p.drawString(100, 600, "Delivery Address: {}".format(order.delivery_address))
+    p.drawString(100, 550, "Payment Method: {}".format(order.payment_method))
 
     # loop through the items and draw them on the PDF
     y = 500
