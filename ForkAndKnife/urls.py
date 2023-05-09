@@ -26,7 +26,8 @@ urlpatterns = [
     path('deleteCart/<int:id>/', views.delete_cart, name="deleteCart"),
      path('order-history/', views.order_history, name='order_history'),
      path('generate_bill/<int:order_id>/', views.generate_bill, name='generateBill'),
-
+path('deleteaccount/<str:username>/', views.deleteAccount, name='deleteAccount'),
+    path('reset-password/', views.reset_password, name='reset_password'),
 
    ##password reset
  #  path('password_reset/', auth_views.PasswordResetView.as_view(template_name ="ForkAndKnife/forgotpass.html"),

@@ -386,3 +386,42 @@ def generate_bill(request, order_id):
     response.write(pdf)
     return response
 
+
+
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash, authenticate, login
+
+User = get_user_model()
+
+@login_required
+def deleteAccount(request, username):
+    if request.method == 'POST':
+        user = User.objects.get(username=username)
+        user.delete()
+        return redirect('homePage')
+    else:
+        return render(request, 'ForkAndKnife/deleteaccount.html')
+
+
+
+@login_required
+def reset_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+
+        user = authenticate(username=request.user.username, password=old_password)
+        if user is not None:
+            if new_password1 == new_password2:
+                user.set_password(new_password1)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your password was successfully updated!')
+                return redirect('homePage')
+            else:
+                messages.error(request, 'The new passwords did not match.')
+        else:
+            messages.error(request, 'Your old password was incorrect.')
+    return render(request, 'ForkAndKnife/reset.html')
